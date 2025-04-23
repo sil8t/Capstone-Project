@@ -1,0 +1,9 @@
+node_modules
+node_modules/
+staticfiles/
+*.pyc
+__pycache__/
+.DS_Store
+*.sqlite3
+.env
+theme/static/css/

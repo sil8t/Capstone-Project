@@ -1,0 +1,67 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+
+<!-- Team Selector and Manage Button -->
+<div class="mb-6 flex items-center justify-between flex-wrap gap-2">
+  <div>
+    <select
+      id="team-select"
+      class="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      onchange="window.location.href='/tasks/team/' + this.value + '/'">
+      {% for t in user.teams.all %}
+        <option value="{{ t.id }}" {% if t.id == team.id %}selected{% endif %}>
+          {{ t.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <a href="{% url 'team_detail' team.id %}"
+     class="inline-block px-4 py-2 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 text-sm font-medium shadow">
+    ⚙️ Manage Team
+  </a>
+</div>
+
+<!-- Section: User's Own Tasks -->
+<h2 class="text-xl font-semibold mb-2">🧍 Your Tasks</h2>
+<ul class="mb-6 space-y-2">
+  {% for task in your_tasks %}
+    {% include 'tasks/partials/task_item.html' with task=task %}
+  {% empty %}
+    <li class="text-sm text-gray-500">No tasks assigned to you.</li>
+  {% endfor %}
+</ul>
+
+<!-- Section: Other Team Tasks -->
+<h2 class="text-xl font-semibold mb-2">👥 Team Tasks</h2>
+<ul class="space-y-2">
+  {% for task in team_tasks %}
+    {% include 'tasks/partials/task_item.html' with task=task %}
+  {% empty %}
+    <li class="text-sm text-gray-500">No team tasks yet.</li>
+  {% endfor %}
+</ul>
+
+<!-- Action Buttons -->
+<div class="mt-8 flex gap-4 flex-wrap">
+  <!-- Create New Task -->
+  <a href="{% url 'create_task' team.id %}"
+     class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium shadow">
+    ➕ New Task
+  </a>
+
+  <!-- Create New Team -->
+  <a href="{% url 'create_team' %}"
+     class="inline-block px-4 py-2 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 text-sm font-medium shadow">
+    🛠️ Create a Team
+  </a>
+
+  <!-- View Invites -->
+  <a href="{% url 'manage_invites' %}"
+     class="inline-block px-4 py-2 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 text-sm font-medium shadow">
+    🔔 View Team Invites
+  </a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+:root {
+    --primary-color: #3366cc;
+    --background-light: #eef;
+    --border-light: #88f;
+    --text-color: #333;
+    --link-color: var(--primary-color);
+    --notification-bg: var(--background-light);
+    --notification-border: var(--border-light);
+    --radius: 6px;
+    --spacing: 1rem;
+    --transition: 0.3s ease-out;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    color: var(--text-color);
+  }
+  
+  nav {
+    margin-bottom: 1.5rem;
+  }
+  
+  nav a,
+  nav form {
+    display: inline-block;
+    margin-right: var(--spacing);
+  }
+  
+  button {
+    background: none;
+    border: none;
+    color: var(--link-color);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 0;
+  }
+  
+  #notification-area {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Notification Styling */
+  .notification {
+    background: var(--notification-bg);
+    border: 1px solid var(--notification-border);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius);
+    font-weight: bold;
+    position: relative;
+    animation: fade-slide var(--transition);
+  }
+  
+  .notification a {
+    color: var(--link-color);
+    text-decoration: underline;
+  }
+  
+  .notification .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 1.1em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+  }
+  
+  /* Notification entrance animation */
+  @keyframes fade-slide {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

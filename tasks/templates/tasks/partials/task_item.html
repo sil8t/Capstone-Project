@@ -1,0 +1,65 @@
+<li id="task-{{ task.id }}" class="transition-all duration-300 ease-in-out bg-white rounded-lg shadow-sm p-4 hover:shadow-md">
+
+  <!-- Title & Edit Link -->
+  <div class="flex justify-between items-start">
+    <strong class="text-lg text-gray-800">{{ task.title }}</strong>
+    <a href="{% url 'edit_task' task.team.id task.id %}" class="text-sm text-blue-600 hover:underline">
+      ✏️ Edit
+    </a>
+  </div>
+
+  <!-- Status Selector & Delete Button -->
+  <div class="flex justify-between items-center mt-3">
+    <!-- Status Dropdown -->
+    <form action="{% url 'update_task_status' task.team.id task.id %}"
+          method="post"
+          class="status-form"
+          data-task-id="{{ task.id }}">
+      {% csrf_token %}
+      <select name="status"
+              onchange="updateStatus(this)"
+              class="border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+        {% for value, label in Task.STATUS_CHOICES %}
+          <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <!-- Delete Button -->
+    <form action="{% url 'delete_task' task.team.id task.id %}"
+          method="post"
+          class="delete-form"
+          data-task-id="{{ task.id }}"
+          onsubmit="return handleDelete(this);">
+      {% csrf_token %}
+      <button type="submit" class="text-red-500 text-sm hover:underline">
+        🗑️ Delete
+      </button>
+    </form>
+  </div>
+
+  <!-- Assigned To -->
+  <div class="text-sm text-gray-500 mt-2">
+    Assigned to: <span class="font-medium">{{ task.assigned_to.username }}</span>
+  </div>
+
+  <!-- Toggleable Description -->
+  {% if task.description %}
+    <div class="mt-3">
+      <button onclick="toggleDetails('{{ task.id }}')"
+              id="toggle-link-{{ task.id }}"
+              class="text-sm text-blue-600 hover:underline transition">
+        📄 View Details
+      </button>
+
+      <div id="details-{{ task.id }}"
+           class="transition-all duration-300 ease-in-out overflow-hidden max-h-0 opacity-0 scale-y-95 transform origin-top pl-3 mt-2 border-l border-gray-300 text-sm text-gray-700">
+        <p class="font-medium mb-1">Description:</p>
+        <p class="whitespace-pre-line">{{ task.description }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+</li>

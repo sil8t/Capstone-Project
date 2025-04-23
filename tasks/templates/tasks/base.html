@@ -1,0 +1,127 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>CollabToDo</title>
+  {% tailwind_css %}
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen font-sans"
+      {% if user.is_authenticated and team %}
+        data-team-id="{{ team.id }}"
+      {% endif %}
+>
+
+<!-- Navigation Bar -->
+<header class="bg-white shadow-sm border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+
+      <!-- Logo -->
+      <div class="text-xl font-semibold text-indigo-600">
+        CollabToDo
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-4 text-sm">
+        {% if user.is_authenticated %}
+          <span class="text-gray-600">Hello, <strong>{{ user.username }}</strong></span>
+
+          {% if user.teams.exists %}
+            <a href="{% url 'task_list' user.teams.first.id %}" class="text-gray-700 hover:text-indigo-600 transition">Tasks</a>
+          {% endif %}
+          <a href="{% url 'manage_invites' %}" class="text-gray-700 hover:text-indigo-600 transition">Invites</a>
+          <a href="{% url 'create_team' %}" class="text-gray-700 hover:text-indigo-600 transition">Create Team</a>
+
+          <form method="post" action="{% url 'logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="text-red-500 hover:text-red-700 transition">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="text-gray-700 hover:text-indigo-600 transition">Login</a>
+          <a href="{% url 'signup' %}" class="text-gray-700 hover:text-indigo-600 transition">Sign Up</a>
+        {% endif %}
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Links -->
+    <div id="mobile-nav-links"
+         class="flex-col space-y-2 py-4 text-sm md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+         style="display: none;">
+      {% if user.is_authenticated %}
+        <span class="px-2 text-gray-600">Hello, <strong>{{ user.username }}</strong></span>
+        {% if user.teams.exists %}
+          <a href="{% url 'task_list' user.teams.first.id %}" class="px-2 text-gray-700 hover:text-indigo-600 transition">Tasks</a>
+        {% endif %}
+        <a href="{% url 'manage_invites' %}" class="px-2 text-gray-700 hover:text-indigo-600 transition">Invites</a>
+        <a href="{% url 'create_team' %}" class="px-2 text-gray-700 hover:text-indigo-600 transition">Create Team</a>
+        <form method="post" action="{% url 'logout' %}" class="px-2">
+          {% csrf_token %}
+          <button type="submit" class="text-red-500 hover:text-red-700 transition">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="px-2 text-gray-700 hover:text-indigo-600 transition">Login</a>
+        <a href="{% url 'signup' %}" class="px-2 text-gray-700 hover:text-indigo-600 transition">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<!-- Main Page Content -->
+<main class="max-w-4xl mx-auto px-4 py-8">
+  <div id="notification-area" class="space-y-2"></div>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+<script src="{% static 'tasks/js/main.js' %}"></script>
+
+<!-- Mobile Menu Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-nav-links');
+    let isOpen = false;
+
+    toggle.addEventListener('click', () => {
+      if (!isOpen) {
+        menu.style.display = 'flex';
+        menu.style.height = '0px';
+        menu.style.opacity = '0';
+        menu.style.transform = 'translateY(-10px)';
+        menu.style.transition = 'height 0.3s ease, opacity 0.3s ease, transform 0.3s ease';
+
+        requestAnimationFrame(() => {
+          menu.style.height = menu.scrollHeight + 'px';
+          menu.style.opacity = '1';
+          menu.style.transform = 'translateY(0)';
+        });
+
+        isOpen = true;
+      } else {
+        menu.style.height = '0px';
+        menu.style.opacity = '0';
+        menu.style.transform = 'translateY(-10px)';
+
+        setTimeout(() => {
+          menu.style.display = 'none';
+        }, 300);
+
+        isOpen = false;
+      }
+    });
+  });
+</script>
+</body>
+</html>
